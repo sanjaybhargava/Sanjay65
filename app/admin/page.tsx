@@ -88,7 +88,22 @@ export default function AdminDashboard() {
             
             <div className="flex flex-col gap-2">
               <button
-                onClick={() => window.open('/api/admin/users/export?format=csv', '_blank')}
+                onClick={async () => {
+                  try {
+                    const response = await fetch('/api/admin/users/export?format=csv');
+                    const blob = await response.blob();
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `users_export_${new Date().toISOString().slice(0, 10)}.csv`;
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    window.URL.revokeObjectURL(url);
+                  } catch (error) {
+                    console.error('Download failed:', error);
+                  }
+                }}
                 className="flex items-center justify-center gap-2 bg-teal-600 text-white px-4 py-2 rounded-lg hover:bg-teal-700 transition-colors text-sm font-medium"
               >
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -98,7 +113,22 @@ export default function AdminDashboard() {
               </button>
               
               <button
-                onClick={() => window.open('/api/admin/users/export?format=excel', '_blank')}
+                onClick={async () => {
+                  try {
+                    const response = await fetch('/api/admin/users/export?format=excel');
+                    const blob = await response.blob();
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `users_export_${new Date().toISOString().slice(0, 10)}.csv`;
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    window.URL.revokeObjectURL(url);
+                  } catch (error) {
+                    console.error('Download failed:', error);
+                  }
+                }}
                 className="flex items-center justify-center gap-2 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors text-sm font-medium"
               >
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
