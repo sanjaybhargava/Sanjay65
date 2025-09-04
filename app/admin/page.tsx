@@ -69,6 +69,46 @@ export default function AdminDashboard() {
           </Link>
 
 
+          {/* Users Export */}
+          <div className="bg-white rounded-lg shadow-sm p-6">
+            <div className="flex items-center gap-4 mb-4">
+              <div className="w-12 h-12 bg-teal-100 rounded-lg flex items-center justify-center">
+                <svg className="w-6 h-6 text-teal-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z" />
+                </svg>
+              </div>
+              <div>
+                <h2 className="text-lg font-semibold text-gray-900">Users Export</h2>
+                <p className="text-sm text-gray-600">Download user data</p>
+              </div>
+            </div>
+            <p className="text-sm text-gray-500 mb-4">
+              Export user emails and signup dates as CSV or Excel files
+            </p>
+            
+            <div className="flex flex-col gap-2">
+              <button
+                onClick={() => window.open('/api/admin/users/export?format=csv', '_blank')}
+                className="flex items-center justify-center gap-2 bg-teal-600 text-white px-4 py-2 rounded-lg hover:bg-teal-700 transition-colors text-sm font-medium"
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+                Download CSV
+              </button>
+              
+              <button
+                onClick={() => window.open('/api/admin/users/export?format=excel', '_blank')}
+                className="flex items-center justify-center gap-2 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors text-sm font-medium"
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+                Download Excel
+              </button>
+            </div>
+          </div>
+
           {/* Database Backup */}
           <Link href="/admin/backup" className="block">
             <div className="bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow p-6">
