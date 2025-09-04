@@ -13,8 +13,29 @@ export async function POST() {
       );
     }
 
-    // Read the backup file
-    const fileBuffer = fs.readFileSync(result.filePath);
+    // Wait for file to be fully written and readable
+    let retries = 10;
+    let fileBuffer: Buffer;
+    
+    while (retries > 0) {
+      try {
+        if (fs.existsSync(result.filePath)) {
+          fileBuffer = fs.readFileSync(result.filePath);
+          if (fileBuffer.length > 0) {
+            break;
+          }
+        }
+      } catch (error) {
+        // File might still be being written
+      }
+      
+      await new Promise(resolve => setTimeout(resolve, 100));
+      retries--;
+      
+      if (retries === 0) {
+        throw new Error(`Backup file not accessible: ${result.filePath}`);
+      }
+    }
     const fileName = `zerofinanx_backup_${result.timestamp}.db`;
 
     // Return the file as a download
