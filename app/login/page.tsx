@@ -9,7 +9,6 @@ export default function EmailCollectionPage() {
   const [email, setEmail] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
-  const [accepted, setAccepted] = useState(false);
 
   useEffect(() => {
     // Check if user already provided email - if so, redirect to content
@@ -22,11 +21,6 @@ export default function EmailCollectionPage() {
 
   async function handleEmailSubmit(e: React.FormEvent) {
     e.preventDefault();
-    
-    if (!accepted) {
-      setMessage("Please agree to the Terms & Privacy to continue.");
-      return;
-    }
     
     if (!email) {
       setMessage("Please enter your email to continue.");
@@ -69,25 +63,11 @@ export default function EmailCollectionPage() {
           <div className="text-center mb-6">
             <div className="inline-flex items-center justify-center h-12 w-12 rounded-2xl bg-slate-900 text-white font-bold">Z</div>
             <h1 className="mt-3 text-2xl font-semibold tracking-tight text-slate-900">Welcome to ZeroFinanx</h1>
-            <p className="mt-1 text-sm text-slate-600">
-              Get started with our free financial education tools and calculators.
+            <p className="mt-4 text-sm text-slate-600 leading-relaxed">
+              We just need your email to get started. This is a beta prototype. We will not spam you. Please add sanjay@tiseed.com to your whitelist so that you receive the few important emails that we send.
             </p>
           </div>
 
-          <label className="flex items-start gap-3 mb-4">
-            <input
-              type="checkbox"
-              checked={accepted}
-              onChange={(e) => setAccepted(e.target.checked)}
-              className="mt-1 h-4 w-4 rounded border-slate-300"
-              aria-label="Agree to Terms & Privacy"
-            />
-            <span className="text-sm text-slate-700">
-              I agree to the <Link href="/terms" className="underline">Terms & Conditions</Link> and <Link href="/privacy" className="underline">Privacy Policy</Link>.
-              <br />
-              <span className="text-xs text-slate-500">Required to continue.</span>
-            </span>
-          </label>
 
           <form onSubmit={handleEmailSubmit} className="grid gap-4">
             <div className="grid gap-2">
@@ -104,7 +84,7 @@ export default function EmailCollectionPage() {
             </div>
             <button
               type="submit"
-              disabled={!accepted || isSubmitting}
+              disabled={isSubmitting}
               className="inline-flex items-center justify-center rounded-xl bg-slate-900 text-white px-4 py-2.5 text-sm font-medium hover:bg-slate-800 disabled:opacity-60"
             >
               {isSubmitting ? 'Getting Started...' : 'Get Started'}
@@ -117,21 +97,7 @@ export default function EmailCollectionPage() {
             </div>
           )}
 
-          <div className="mt-6 text-xs text-slate-500 space-y-2">
-            <p>
-              ZeroFinanx provides education only. Not investment, tax, or legal advice. 
-              Jurisdiction: Mumbai, Maharashtra, India.
-            </p>
-            <p>
-              We only collect your email for essential communications. We never sell or share it. 
-              Please whitelist <span className="font-mono">support@zerofinanx.com</span> for important updates.
-            </p>
-          </div>
         </div>
-
-        <p className="mt-6 text-center text-xs text-slate-500">
-          © {new Date().getFullYear()} ZeroFinanx. Educational content only.
-        </p>
       </div>
     </main>
   );
