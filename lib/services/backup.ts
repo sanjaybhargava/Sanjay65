@@ -41,12 +41,8 @@ export class BackupService {
       const backupFileName = `zerofinanx_backup_${timestamp}.db`;
       const backupPath = path.join(this.backupDir, backupFileName);
       
-      // Create backup using SQLite BACKUP API
-      const backupDb = new Database(backupPath);
-      
       // Use SQLite's backup function for atomic operation
       this.db.backup(backupPath);
-      backupDb.close();
       
       console.log(`Database backed up to: ${backupPath}`);
       
