@@ -12,7 +12,7 @@ interface GuestCookieData {
 }
 
 const COOKIE_NAME = 'zerofinanx_guest_auth';
-const COOKIE_VERSION = 1;
+const COOKIE_VERSION = 2; // Bumped to force fresh start
 const COOKIE_MAX_AGE = 365 * 24 * 60 * 60; // 1 year in seconds
 
 // Check if running in browser
@@ -28,11 +28,22 @@ export function getGuestCookie(): GuestCookieData | null {
       const [name, value] = cookie.trim().split('=');
       if (name === COOKIE_NAME && value) {
         const decoded = decodeURIComponent(value);
-        return JSON.parse(decoded);
+        const data = JSON.parse(decoded);
+        
+        // Check version compatibility
+        if (data.version !== COOKIE_VERSION) {
+          // Clear outdated cookie and return null
+          clearGuestCookie();
+          return null;
+        }
+        
+        return data;
       }
     }
   } catch (error) {
     console.error('Error reading guest cookie:', error);
+    // Clear corrupted cookie
+    clearGuestCookie();
   }
   
   return null;

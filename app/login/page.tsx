@@ -31,8 +31,28 @@ export default function EmailCollectionPage() {
     setMessage(null);
 
     try {
-      // Store email in cookie
+      // Store email in cookie first
       setGuestCookie({ email, allowed: true });
+      
+      // Also save user to database for persistence
+      try {
+        await fetch('/api/customers', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            firstName: '', // We'll collect this later if needed
+            lastName: '',  // We'll collect this later if needed  
+            email: email,
+            marketingConsent: false,
+            smsConsent: false
+          }),
+        });
+      } catch (dbError) {
+        // Don't block user flow if database save fails
+        console.error('Failed to save user to database:', dbError);
+      }
       
       // Show success and redirect
       setMessage("Great! Welcome to ZeroFinanx. Redirecting you to the app...");
@@ -42,6 +62,7 @@ export default function EmailCollectionPage() {
       }, 1500);
       
     } catch (err) {
+      console.error('Login error:', err);
       setMessage("Something went wrong. Please try again.");
       setIsSubmitting(false);
     }
