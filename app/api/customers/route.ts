@@ -36,6 +36,10 @@ After that, you'll find lessons tailored to where you are in life.
 
 Play with the lessons and calculators. The more you use them the clearer they will become. 
 
+Go to your Dashboard: 
+https://bit.ly/IA_Dashboard
+
+
 Two asks:
 1. If you find this useful, share it with others: https://bit.ly/IA_Prototype
 

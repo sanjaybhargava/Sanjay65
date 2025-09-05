@@ -12,7 +12,7 @@ interface GuestCookieData {
 }
 
 const COOKIE_NAME = 'zerofinanx_guest_auth';
-const COOKIE_VERSION = 4; // Clear cookies before adding email functionality
+const COOKIE_VERSION = 5; // Clear cookies before testing updated email functionality
 const COOKIE_MAX_AGE = 365 * 24 * 60 * 60; // 1 year in seconds
 
 // Check if running in browser
