@@ -3,10 +3,15 @@ import { isValidEmail, normalizeEmail } from '@/lib/cookies';
 import { userRepository, Customer } from '@/lib/repositories/users';
 import { Resend } from 'resend';
 
-const resend = new Resend(process.env.RESEND_API_KEY);
-
 async function sendWelcomeEmail(email: string) {
   try {
+    // Initialize Resend only when actually sending emails
+    if (!process.env.RESEND_API_KEY) {
+      console.log('RESEND_API_KEY not configured - skipping email send');
+      return;
+    }
+    
+    const resend = new Resend(process.env.RESEND_API_KEY);
     await resend.emails.send({
       from: 'sanjay@tiseed.com',
       to: email,
