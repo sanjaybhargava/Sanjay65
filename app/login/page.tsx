@@ -42,8 +42,8 @@ export default function EmailCollectionPage() {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
-            firstName: '', // We'll collect this later if needed
-            lastName: '',  // We'll collect this later if needed  
+            firstName: 'Guest', // Default name for email-only signup
+            lastName: 'User',   // Default name for email-only signup
             email: email,
             marketingConsent: false,
             smsConsent: false
