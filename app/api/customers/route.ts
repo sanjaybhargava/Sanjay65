@@ -1,18 +1,19 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { isValidEmail, normalizeEmail } from '@/lib/cookies';
 import { userRepository, Customer } from '@/lib/repositories/users';
-import { Resend } from 'resend';
+import sgMail from '@sendgrid/mail';
 
 async function sendWelcomeEmail(email: string) {
   try {
-    // Initialize Resend only when actually sending emails
-    if (!process.env.RESEND_API_KEY) {
-      console.log('RESEND_API_KEY not configured - skipping email send');
+    // Initialize SendGrid only when actually sending emails
+    if (!process.env.SENDGRID_API_KEY) {
+      console.log('SENDGRID_API_KEY not configured - skipping email send');
       return;
     }
     
-    const resend = new Resend(process.env.RESEND_API_KEY);
-    await resend.emails.send({
+    console.log('Attempting to send welcome email to:', email);
+    sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+    const result = await sgMail.send({
       from: 'sanjay@tiseed.com',
       to: email,
       subject: 'Finally, financial advice that reduces anxiety',
@@ -45,8 +46,12 @@ Two asks:
 
 2. Give us feedback - what's working, what's not, what's missing? Your input shapes what we build next. Our aim is to eliminate financial anxiety, and you can help make that happen.
 
-P.S. Don't try to do everything at once. One calculator, then one lesson. Progress beats perfection.`
+P.S. Don't try to do everything at once. One calculator, then one lesson. Progress beats perfection.
+
+All the Best,
+Sanjay Bhargava`
     });
+    console.log('Email sent successfully:', result);
   } catch (error) {
     console.error('Failed to send welcome email:', error);
     // Don't throw - we don't want email failures to break signup
