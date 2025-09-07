@@ -131,10 +131,28 @@ export function getCookieInfo(): {
   };
 }
 
-// Validate email format
+// Validate email format with enhanced validation
 export function isValidEmail(email: string): boolean {
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  return emailRegex.test(email.trim().toLowerCase());
+  const trimmed = email.trim().toLowerCase();
+  
+  // Basic format check
+  const emailRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
+  if (!emailRegex.test(trimmed)) return false;
+  
+  // Check for common typos and invalid patterns
+  const invalidPatterns = [
+    /\.{2,}/, // Multiple consecutive dots
+    /^\./, // Starts with dot
+    /\.$/, // Ends with dot
+    /@\./, // @ followed by dot
+    /\.@/, // Dot followed by @
+    /@.*@/, // Multiple @ symbols
+    /\s/, // Any whitespace
+    /[<>"]/, // Invalid characters
+    /@example\.(com|org|net)$/i, // Common test domains
+  ];
+  
+  return !invalidPatterns.some(pattern => pattern.test(trimmed));
 }
 
 // Normalize email (lowercase, trim)
