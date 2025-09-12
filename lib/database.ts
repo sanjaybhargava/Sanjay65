@@ -131,6 +131,21 @@ function runMigrations() {
         CREATE INDEX IF NOT EXISTS idx_lessons_order ON lessons(order_index);
         CREATE INDEX IF NOT EXISTS idx_lessons_active ON lessons(active);
       `
+    },
+    {
+      name: '002_create_waitlist',
+      sql: `
+        -- Waitlist table for beta closed signups
+        CREATE TABLE IF NOT EXISTS waitlist (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          email TEXT UNIQUE NOT NULL,
+          created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+        );
+
+        -- Create index on email for faster lookups
+        CREATE INDEX IF NOT EXISTS idx_waitlist_email ON waitlist(email);
+        CREATE INDEX IF NOT EXISTS idx_waitlist_created ON waitlist(created_at);
+      `
     }
   ];
 

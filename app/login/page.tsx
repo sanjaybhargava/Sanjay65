@@ -11,12 +11,9 @@ export default function EmailCollectionPage() {
   const [message, setMessage] = useState<string | null>(null);
 
   useEffect(() => {
-    // Check if user already provided email - if so, redirect to content
-    const storedEmail = getStoredEmail();
-    if (storedEmail) {
-      router.push('/dashboard');
-      return;
-    }
+    // Beta is closed - redirect all users to beta-closed page
+    // Existing users should access via homepage, not login
+    router.push('/beta-closed');
   }, [router]);
 
   async function handleEmailSubmit(e: React.FormEvent) {

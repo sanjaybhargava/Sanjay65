@@ -8,14 +8,57 @@ import { getStoredEmail } from '@/lib/guest-cookie';
 export default function Dashboard() {
   const router = useRouter();
   const [userEmail, setUserEmail] = useState<string | null>(null);
+  const [isAuthorized, setIsAuthorized] = useState<boolean | null>(null);
 
   useEffect(() => {
-    // Get email from guest cookie if available
-    const storedEmail = getStoredEmail();
-    if (storedEmail) {
-      setUserEmail(storedEmail);
-    }
+    checkAccess();
   }, []);
+
+  const checkAccess = async () => {
+    const storedEmail = getStoredEmail();
+    if (!storedEmail) {
+      // No email = redirect to beta-closed
+      router.push('/beta-closed');
+      return;
+    }
+
+    try {
+      // Check if user exists in database (existing beta user)
+      const response = await fetch('/api/customers/check', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: storedEmail })
+      });
+      
+      if (response.ok) {
+        const data = await response.json();
+        if (data.exists) {
+          setUserEmail(storedEmail);
+          setIsAuthorized(true);
+        } else {
+          // Email exists but user not in database = redirect to beta-closed
+          router.push('/beta-closed');
+        }
+      } else {
+        router.push('/beta-closed');
+      }
+    } catch (error) {
+      console.error('Error checking access:', error);
+      router.push('/beta-closed');
+    }
+  };
+
+  // Show loading while checking authorization
+  if (isAuthorized === null) {
+    return (
+      <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white flex items-center justify-center">
+        <div className="text-center">
+          <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600 mb-4"></div>
+          <p className="text-gray-600">Loading...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">

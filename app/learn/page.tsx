@@ -4,6 +4,7 @@ import { Book, ArrowLeft, Clock, CheckCircle, PlayCircle, FileText, TrendingUp, 
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useState, useEffect, Suspense } from 'react';
 import LessonViewer from '@/components/LessonViewer';
+import { getStoredEmail } from '@/lib/guest-cookie';
 
 interface Lesson {
   id: number;
@@ -28,9 +29,47 @@ function EducationalContentInner() {
   const searchParams = useSearchParams();
   const [lessons, setLessons] = useState<Lesson[]>([]);
   const [loading, setLoading] = useState(true);
+  const [isAuthorized, setIsAuthorized] = useState<boolean | null>(null);
+
+  // Check user access first
+  useEffect(() => {
+    checkAccess();
+  }, []);
+
+  const checkAccess = async () => {
+    const storedEmail = getStoredEmail();
+    if (!storedEmail) {
+      router.push('/beta-closed');
+      return;
+    }
+
+    try {
+      const response = await fetch('/api/customers/check', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: storedEmail })
+      });
+      
+      if (response.ok) {
+        const data = await response.json();
+        if (data.exists) {
+          setIsAuthorized(true);
+        } else {
+          router.push('/beta-closed');
+        }
+      } else {
+        router.push('/beta-closed');
+      }
+    } catch (error) {
+      console.error('Error checking access:', error);
+      router.push('/beta-closed');
+    }
+  };
 
   // Fetch lessons from API
   useEffect(() => {
+    if (!isAuthorized) return;
+
     const fetchLessons = async () => {
       try {
         const response = await fetch('/api/lessons');
@@ -57,7 +96,7 @@ function EducationalContentInner() {
     };
 
     fetchLessons();
-  }, [searchParams]);
+  }, [searchParams, isAuthorized]);
 
   // Icon mapping for lesson icons
   const getIconComponent = (iconName: string) => {
@@ -76,7 +115,7 @@ function EducationalContentInner() {
   const [selectedLesson, setSelectedLesson] = useState<Lesson | null>(null);
 
   // Show loading state
-  if (loading) {
+  if (isAuthorized === null || loading) {
     return (
       <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white flex items-center justify-center">
         <div className="text-center">

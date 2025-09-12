@@ -56,14 +56,62 @@ export default function ZeroFinanxPricingPage() {
   const router = useRouter();
   const [showPhilosophy, setShowPhilosophy] = useState(false);
   const [hasEmail, setHasEmail] = useState(false);
+  const [isExistingUser, setIsExistingUser] = useState<boolean | null>(null);
   
-  // Check if user already provided email
+  // Check if user already provided email and verify if they're an existing beta user
   useEffect(() => {
     const storedEmail = getStoredEmail();
     if (storedEmail) {
       setHasEmail(true);
+      // Check if this user exists in the database (existing beta user)
+      checkExistingUser(storedEmail);
+    } else {
+      // No stored email = new user, redirect to beta-closed
+      setIsExistingUser(false);
+      router.push('/beta-closed');
     }
-  }, []);
+  }, [router]);
+
+  const checkExistingUser = async (email: string) => {
+    try {
+      const response = await fetch('/api/customers/check', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email })
+      });
+      
+      if (response.ok) {
+        const data = await response.json();
+        if (data.exists) {
+          setIsExistingUser(true);
+        } else {
+          // Email in cookie but not in database = redirect to beta-closed
+          setIsExistingUser(false);
+          router.push('/beta-closed');
+        }
+      } else {
+        // API error, assume new user
+        setIsExistingUser(false);
+        router.push('/beta-closed');
+      }
+    } catch (error) {
+      console.error('Error checking user:', error);
+      setIsExistingUser(false);
+      router.push('/beta-closed');
+    }
+  };
+
+  // Show loading while checking user status
+  if (isExistingUser === null) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-purple-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600 mb-4"></div>
+          <p className="text-gray-600">Loading...</p>
+        </div>
+      </div>
+    );
+  }
   
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-purple-50">
@@ -127,11 +175,11 @@ export default function ZeroFinanxPricingPage() {
           <PricingCard
             name="Education (Beta)"
             priceLabel="Free"
-            blurb="Get user feedback on education lessons and calculators. Save Number, Spend Number, core financial guidance."
+            blurb="Welcome back! Continue your financial education journey with lessons and calculators."
             highlight
-            ctaLabel={hasEmail ? "Go to Dashboard" : "Join FREE Beta"}
-            onLoginHref={hasEmail ? "/dashboard" : "/login"}
-            badge="Limited — 100 spots"
+            ctaLabel="Go to Dashboard"
+            onLoginHref="/dashboard"
+            badge="Beta Access ✓"
           />
 
           <PricingCard
