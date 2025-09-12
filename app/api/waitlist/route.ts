@@ -43,7 +43,7 @@ async function sendWaitlistConfirmation(email: string) {
           <p><strong>Help us spread the word:</strong> If you know others struggling with financial anxiety, please share our waitlist with them. The more people who join us, the stronger our community becomes.</p>
           
           <div style="text-align: center; margin: 30px 0;">
-            <a href="http://localhost:3003/beta-closed" style="display: inline-block; background-color: #4f46e5; color: white; padding: 12px 24px; text-decoration: none; border-radius: 12px; font-weight: bold;">Share the Waitlist</a>
+            <a href="https://zerofinanx.com/beta-closed" style="display: inline-block; background-color: #4f46e5; color: white; padding: 12px 24px; text-decoration: none; border-radius: 12px; font-weight: bold;">Share the Waitlist</a>
           </div>
           
           <p>All the Best,<br>
@@ -70,7 +70,7 @@ We'll email you as soon as it's ready. Until then, thanks for your patience!
 
 Help us spread the word: If you know others struggling with financial anxiety, please share our waitlist with them. The more people who join us, the stronger our community becomes.
 
-Share the waitlist: http://localhost:3003/beta-closed
+Share the waitlist: https://zerofinanx.com/beta-closed
 
 All the Best,
 Sanjay Bhargava
