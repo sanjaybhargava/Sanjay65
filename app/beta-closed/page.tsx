@@ -21,6 +21,29 @@ export default function BetaClosedPage() {
     setMessage(null);
 
     try {
+      // First check if user has been promoted to beta
+      const checkResponse = await fetch('/api/customers/check', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: email.trim().toLowerCase() })
+      });
+      
+      if (checkResponse.ok) {
+        const checkData = await checkResponse.json();
+        if (checkData.exists) {
+          // User has been promoted to beta! Set cookie and redirect
+          const { setGuestCookie } = await import('@/lib/guest-cookie');
+          setGuestCookie({ email: email.trim().toLowerCase(), allowed: true });
+          setMessage("Great! You've been approved for beta access. Redirecting to app...");
+          
+          setTimeout(() => {
+            window.location.href = '/dashboard';
+          }, 1500);
+          return;
+        }
+      }
+
+      // User not in beta yet, proceed with waitlist signup
       const response = await fetch('/api/waitlist', {
         method: 'POST',
         headers: {
@@ -158,7 +181,7 @@ export default function BetaClosedPage() {
                   disabled={isSubmitting}
                   className="flex-1 inline-flex items-center justify-center rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-4 py-2.5 text-sm font-medium hover:from-indigo-700 hover:to-purple-700 disabled:opacity-60 transition-all duration-200"
                 >
-                  {isSubmitting ? 'Joining...' : 'Join Waitlist'}
+                  {isSubmitting ? 'Checking...' : 'Join Waitlist / Check Access'}
                 </button>
                 
                 <button
